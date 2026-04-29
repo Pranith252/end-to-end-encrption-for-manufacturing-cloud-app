@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureManuf — Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'IBM Plex Mono',monospace;background:#060810;color:#e8eeff;display:flex;align-items:center;justify-content:center}
+
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.wrap{width:500px;position:relative;z-index:1;animation:fadeUp 0.45s ease both;margin:20px}
+
+.brand{font-family:'Bebas Neue';font-size:60px;letter-spacing:4px;background:linear-gradient(135deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:3px}
+.brand-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#374151;margin-bottom:8px}
+
+.card{background:rgba(15,18,36,0.95);border:1px solid #1e293b;border-radius:12px;padding:36px 40px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#818cf8,#a5b4fc,transparent)}
+
+.c-heading{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#374151;margin-bottom:22px}
+
+.field{margin-bottom:14px}
+.field-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#4b5563;margin-bottom:5px}
+.field-inp{width:100%;background:#0d1117;border:1px solid #1e293b;border-radius:7px;color:#e8eeff;font-family:'IBM Plex Mono';font-size:13px;padding:11px 14px;outline:none;transition:all 0.2s}
+.field-inp:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(129,140,248,0.1)}
+.field-inp::placeholder{color:#1e293b}
+select.field-inp{cursor:pointer}
+
+.err-box{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:7px;padding:10px 14px;font-size:11px;color:#f87171;margin-bottom:14px;display:none}
+.success-box{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:7px;padding:10px 14px;font-size:11px;color:#4ade80;margin-bottom:14px;display:none}
+
+.submit-btn{width:100%;background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;border:none;border-radius:7px;padding:13px;font-family:'IBM Plex Mono';font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,0.3)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+.login-link{text-align:center;margin-top:20px;font-size:10px;color:#4b5563}
+.login-link a{color:#818cf8;text-decoration:none}
+.login-link a:hover{text-decoration:underline}
+
+.enc-status{display:flex;align-items:center;gap:7px;font-size:9px;color:#374151;margin-bottom:26px;letter-spacing:1px}
+.enc-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">SECUREMANUF</div>
+  <div class="brand-sub">End-to-End Encrypted Manufacturing Platform</div>
+
+  <div class="enc-status">
+    <div class="enc-dot"></div>
+    <span>E2EE ACTIVE · Register New Account</span>
+  </div>
+
+  <div class="card">
+    <div class="c-heading">— Create New Account —</div>
+    <div class="err-box" id="err"></div>
+    <div class="success-box" id="success"></div>
+
+    <div class="field">
+      <div class="field-lbl">Full Name</div>
+      <input class="field-inp" id="fullname" type="text" placeholder="Enter your full name">
+    </div>
+
+    <div class="field">
+      <div class="field-lbl">Username</div>
+      <input class="field-inp" id="username" type="text" placeholder="Choose a username">
+    </div>
+
+    <div class="field">
+      <div class="field-lbl">Password</div>
+      <input class="field-inp" id="password" type="password" placeholder="Create a password (min 4 chars)">
+    </div>
+
+    <div class="field">
+      <div class="field-lbl">Confirm Password</div>
+      <input class="field-inp" id="confirm" type="password" placeholder="Confirm your password">
+    </div>
+
+    <div class="field">
+      <div class="field-lbl">Select Role</div>
+      <select class="field-inp" id="role">
+        <option value="operator">👷 Floor Operator (Machines A-C, Assembly Line)</option>
+        <option value="qc">🔍 QC Inspector (QC Stations 1-2)</option>
+        <option value="maintenance">🔧 Maintenance Engineer (Maintenance Unit)</option>
+      </select>
+    </div>
+
+    <button class="submit-btn" onclick="register()">Register →</button>
+
+    <div class="login-link">
+      Already have an account? <a href="/login">Login here</a>
+    </div>
+  </div>
+</div>
+
+<script>
+async function register() {
+  const fullname = document.getElementById('fullname').value.trim();
+  const username = document.getElementById('username').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('confirm').value;
+  const role = document.getElementById('role').value;
+  
+  const errDiv = document.getElementById('err');
+  const successDiv = document.getElementById('success');
+  const btn = document.querySelector('.submit-btn');
+  
+  errDiv.style.display = 'none';
+  successDiv.style.display = 'none';
+  
+  if (!fullname || !username || !password) {
+    errDiv.textContent = 'Please fill all fields';
+    errDiv.style.display = 'block';
+    return;
+  }
+  
+  if (password !== confirm) {
+    errDiv.textContent = 'Passwords do not match';
+    errDiv.style.display = 'block';
+    return;
+  }
+  
+  if (password.length < 4) {
+    errDiv.textContent = 'Password must be at least 4 characters';
+    errDiv.style.display = 'block';
+    return;
+  }
+  
+  if (username.length < 3) {
+    errDiv.textContent = 'Username must be at least 3 characters';
+    errDiv.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Creating account...';
+  
+  try {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullname, username, password, role })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      successDiv.textContent = '✅ Registration successful! Please wait for admin approval. Redirecting to login...';
+      successDiv.style.display = 'block';
+      setTimeout(() => { window.location.href = '/login'; }, 3000);
+    } else {
+      errDiv.textContent = data.error || 'Registration failed';
+      errDiv.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Register →';
+    }
+  } catch (err) {
+    errDiv.textContent = 'Connection error. Please try again.';
+    errDiv.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Register →';
+  }
+}
+</script>
+</body>
+</html>

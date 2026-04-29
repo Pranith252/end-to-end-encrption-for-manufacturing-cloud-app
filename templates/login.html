@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureManuf — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'IBM Plex Mono',monospace;background:#060810;color:#e8eeff;display:flex;align-items:center;justify-content:center}
+
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px);pointer-events:none;z-index:9000}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}50%{box-shadow:0 0 30px 2px rgba(99,102,241,0.15)}}
+
+.wrap{width:500px;position:relative;z-index:1;animation:fadeUp 0.45s ease both;margin:20px}
+
+.brand{font-family:'Bebas Neue';font-size:60px;letter-spacing:4px;background:linear-gradient(135deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:3px}
+.brand-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#374151;margin-bottom:8px}
+.brand-badges{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.badge{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid}
+.badge.ibm{border-color:#3b5bdb;color:#748ffc;background:rgba(59,91,219,0.1)}
+.badge.ncs{border-color:#2563eb;color:#60a5fa;background:rgba(37,99,235,0.1)}
+.badge.yu{border-color:#374151;color:#6b7280;background:transparent}
+
+.card{background:rgba(15,18,36,0.95);border:1px solid #1e293b;border-radius:12px;padding:36px 40px;position:relative;overflow:hidden;animation:glow 4s ease infinite}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#818cf8,#a5b4fc,transparent)}
+
+.c-heading{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#374151;margin-bottom:22px}
+
+.role-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
+.rt{background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:13px 6px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative}
+.rt:hover{border-color:#334155;transform:translateY(-1px)}
+.rt.sel{border-color:#818cf8;background:rgba(129,140,248,0.08)}
+.rt.sel::after{content:'✔';position:absolute;top:5px;right:7px;font-size:8px;color:#818cf8}
+.rt-ico{font-size:20px;margin-bottom:5px}
+.rt-nm{font-size:10px;font-weight:600;color:#e8eeff}
+.rt-desc{font-size:8px;color:#374151;margin-top:2px}
+
+.field{margin-bottom:14px}
+.field-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#4b5563;margin-bottom:5px}
+.field-inp{width:100%;background:#0d1117;border:1px solid #1e293b;border-radius:7px;color:#e8eeff;font-family:'IBM Plex Mono';font-size:13px;padding:11px 14px;outline:none;transition:all 0.2s}
+.field-inp:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(129,140,248,0.1)}
+.field-inp::placeholder{color:#1e293b}
+
+.err-box{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:7px;padding:10px 14px;font-size:11px;color:#f87171;margin-bottom:14px;display:none}
+
+.submit-btn{width:100%;background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;border:none;border-radius:7px;padding:13px;font-family:'IBM Plex Mono';font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,0.3)}
+.submit-btn:active{transform:scale(0.99)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.register-link{text-align:center;margin-top:15px;font-size:10px;color:#4b5563}
+.register-link a{color:#818cf8;text-decoration:none}
+.register-link a:hover{text-decoration:underline}
+
+.creds{margin-top:20px;padding:14px;background:rgba(13,17,23,0.8);border:1px solid #1e293b;border-radius:7px;font-size:9px;color:#374151;line-height:2.3}
+.creds b{color:#818cf8}
+
+.enc-status{display:flex;align-items:center;gap:7px;font-size:9px;color:#374151;margin-bottom:26px;letter-spacing:1px;flex-wrap:wrap}
+.enc-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">SECUREMANUF</div>
+  <div class="brand-sub">End-to-End Encrypted Manufacturing Platform · PRJN26-208</div>
+  <div class="brand-badges">
+    <span class="badge ibm">IBM ICE</span>
+    <span class="badge ncs">NCS</span>
+    <span class="badge yu">Yenepoya University 2026</span>
+  </div>
+
+  <div class="enc-status">
+    <div class="enc-dot"></div>
+    <span>E2EE ACTIVE · AES-128-CBC · HMAC-SHA256 · Fernet</span>
+  </div>
+
+  <div class="card">
+    <div class="c-heading">— System Authentication —</div>
+    <div class="err-box" id="err"></div>
+
+    <div class="field">
+      <div class="field-lbl">Select Your Role</div>
+      <div class="role-grid">
+        <div class="rt" data-role="admin" data-password="admin123">
+          <div class="rt-ico">🔐</div>
+          <div class="rt-nm">Admin</div>
+          <div class="rt-desc">Full access</div>
+        </div>
+        <div class="rt" data-role="operator" data-password="op123">
+          <div class="rt-ico">⚙️</div>
+          <div class="rt-nm">Operator</div>
+          <div class="rt-desc">Machines A-C</div>
+        </div>
+        <div class="rt" data-role="qc" data-password="qc123">
+          <div class="rt-ico">🔍</div>
+          <div class="rt-nm">QC Inspector</div>
+          <div class="rt-desc">QC Stations</div>
+        </div>
+        <div class="rt" data-role="maintenance" data-password="maint123">
+          <div class="rt-ico">🔧</div>
+          <div class="rt-nm">Maintenance</div>
+          <div class="rt-desc">Repairs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-lbl">Username</div>
+      <input class="field-inp" id="lu" type="text" value="admin" placeholder="username" autocomplete="off">
+    </div>
+    
+    <div class="field">
+      <div class="field-lbl">Password</div>
+      <input class="field-inp" id="lp" type="password" value="admin123" placeholder="password">
+    </div>
+
+    <button class="submit-btn" id="lbtn" onclick="login()">Access System →</button>
+
+    <div class="register-link">
+      New user? <a href="/register">Create an account here</a>
+    </div>
+
+    <div class="creds">
+      <b>admin</b>/admin123 &nbsp;·&nbsp; <b>operator</b>/op123 &nbsp;·&nbsp; <b>qc</b>/qc123 &nbsp;·&nbsp; <b>maintenance</b>/maint123
+    </div>
+  </div>
+</div>
+
+<script>
+// Get all role buttons
+const roleButtons = document.querySelectorAll('.rt');
+
+// Add click event to each role button
+roleButtons.forEach(btn => {
+  btn.addEventListener('click', function() {
+    // Remove selected class from all buttons
+    roleButtons.forEach(b => b.classList.remove('sel'));
+    
+    // Add selected class to clicked button
+    this.classList.add('sel');
+    
+    // Get role and password from data attributes
+    const role = this.getAttribute('data-role');
+    const password = this.getAttribute('data-password');
+    
+    // Set username and password fields
+    document.getElementById('lu').value = role;
+    document.getElementById('lp').value = password;
+    
+    // Also clear any error message
+    document.getElementById('err').style.display = 'none';
+  });
+});
+
+// Set default selected (Admin)
+document.querySelector('.rt[data-role="admin"]').classList.add('sel');
+
+// Login function
+async function login() {
+  const username = document.getElementById('lu').value.trim().toLowerCase();
+  const password = document.getElementById('lp').value;
+  const btn = document.getElementById('lbtn');
+  const errDiv = document.getElementById('err');
+  
+  errDiv.style.display = 'none';
+  
+  if (!username || !password) {
+    errDiv.textContent = 'Please enter username and password';
+    errDiv.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Authenticating...';
+  
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, password: password })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      btn.textContent = 'Access Granted ✔';
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 500);
+    } else {
+      errDiv.textContent = data.error || 'Invalid credentials. Access denied.';
+      errDiv.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Access System →';
+      
+      // Shake animation
+      errDiv.style.animation = 'none';
+      setTimeout(() => {
+        errDiv.style.animation = 'shake 0.4s ease';
+      }, 10);
+    }
+  } catch (error) {
+    errDiv.textContent = 'Connection error. Please check if server is running.';
+    errDiv.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Access System →';
+    console.error('Login error:', error);
+  }
+}
+
+// Enter key support
+document.getElementById('lp').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    login();
+  }
+});
+
+document.getElementById('lu').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    login();
+  }
+});
+</script>
+</body>
+</html>
